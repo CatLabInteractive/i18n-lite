@@ -19,7 +19,7 @@ define (
 			var deferred = jquery.Deferred();
 			deferred.done ();
 
-			return deferred();
+			return deferred;
 
 		};
 
