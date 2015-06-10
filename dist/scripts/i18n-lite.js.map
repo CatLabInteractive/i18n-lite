@@ -1,0 +1,1 @@
+{"version":3,"file":"i18n-lite.js","sources":["i18n-lite.js"],"names":["define","Translate"],"mappings":"AAAAA,OACA,aAEA,8BAEA,SAAAC,GACA,MAAA,IAAAA,KAGAD,OAAA,YAAA","sourcesContent":["define (\n\t'easelbone',\n\t[\n\t\t'CatLab/i18n-lite/Translate'\n\t],\n\tfunction (Translate) {\n\t\treturn new Translate ();\n\t}\n);\ndefine(\"i18n-lite\", function(){});\n\n"]}

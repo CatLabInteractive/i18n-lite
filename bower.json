@@ -1,0 +1,32 @@
+{
+  "name": "i18n-lite",
+  "version": "0.1.0",
+  "homepage": "https://github.com/CatLabInteractive/i18n-lite",
+  "authors": [
+    "Thijs Van der Schaeghe <thijs@catlab.be>"
+  ],
+  "description": "Very simple i18n library for javascript.",
+  "main": "dist/scripts/i18n-lite.js",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "i18n",
+    "javascript"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+	"app",
+	"Gruntfile.js",
+	"package.json"
+  ],
+  "dependencies": {
+    "sprintf": "~1.0.2",
+    "jquery": "~2.1.4"
+  }
+}
