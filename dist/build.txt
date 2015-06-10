@@ -1,4 +1,0 @@
-
-scripts/i18n-lite.js
-----------------
-scripts/i18n-lite.js
