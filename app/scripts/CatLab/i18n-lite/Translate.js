@@ -17,7 +17,7 @@ define (
 		p.initialize = function (options) {
 
 			var deferred = jquery.Deferred();
-			deferred.done ();
+			deferred.resolve ();
 
 			return deferred;
 
