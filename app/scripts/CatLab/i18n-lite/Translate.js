@@ -142,6 +142,10 @@ define (
 			return sprintf.vsprintf (string, args);
 		};
 
+		// Alias.
+		p.t = p.translate;
+		p._ = p.translate;
+
 		p.track = function (string, isPluralizable)
 		{
 			var img = new Image();
