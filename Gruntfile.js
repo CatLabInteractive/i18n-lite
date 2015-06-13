@@ -24,7 +24,8 @@ module.exports = function(grunt) {
 					preserveLicenseComments : false,
 					exclude: [
 						'jquery',
-						'sprintf'
+						'sprintf',
+						'js-cookie'
 					]
 				}
 			}
@@ -35,7 +36,21 @@ module.exports = function(grunt) {
 			'dist/scripts/CatLab/',
 			'dist/vendor/',
 			'dist/examples'
-		]
+		],
+
+		i18n_downloader: {
+			default_options : {
+				options: {
+					'dest': 'app/examples/locales',
+					'src': {
+						'host': 'catlab-translate.herokuapp.com',
+						'project': 'library',
+						'port': 80
+					},
+					'format' : 'i18nlite'
+				}
+			}
+		}
 	});
 
 	// Requirejs
@@ -50,5 +65,7 @@ module.exports = function(grunt) {
 
 	grunt.loadNpmTasks('grunt-bower-requirejs');
 
-	grunt.registerTask('default', ['requirejs', 'copy', 'clean' ]);
+	grunt.loadNpmTasks ('grunt-i18n-downloader');
+
+	grunt.registerTask('default', [ 'i18n_downloader', 'requirejs', 'copy', 'clean' ]);
 };

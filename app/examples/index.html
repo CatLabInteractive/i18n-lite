@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>title</title>
+
+	<script src="../vendor/requirejs/require.js"></script>
+
+	<script>
+
+		require.config ({
+			'baseUrl' : '../scripts/',
+			'urlArgs' : 'bust=v2'
+		});
+
+
+		require ([ 'main' ], function (easelbone)
+		{
+			require (
+				[ 'i18n-lite' ],
+				function (i18n)
+				{
+
+					i18n.initialize (
+						{
+							'defaultLanguage' : 'en',
+							'tracker' : 'https://catlab-translate.herokuapp.com/projects/library/track?text=%s&quantified=%d'
+						}
+					).done (function ()
+					{
+						$(document).ready (function ()
+						{
+
+							var debug = $('#debug');
+							function log (msg)
+							{
+								debug.append (msg + "\n");
+							}
+
+							log (i18n.translate ('This is a regular translated string.'));
+							log (i18n.translate ('This %s has a parameter in it.', 'string'));
+							log (i18n.translate ('The big cookie monster eats %s cookies.', Math.floor(Math.random() * 3)));
+						});
+					});
+				}
+			);
+
+		});
+
+	</script>
+</head>
+<body>
+<!-- page content -->
+
+	<pre id="debug"></pre>
+
+</body>
+</html>

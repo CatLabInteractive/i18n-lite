@@ -1,29 +1,209 @@
 define (
 	[
 		'jquery',
-		'sprintf'
+		'sprintf',
+		'js-cookie'
 	],
 	function (
 		jquery,
-		sprintf
+		sprintf,
+		Cookies
 	) {
+		var Translate = function (options) {
 
-		var Translate = function () {
+			this.defaultLanguage = 'en';
+			this.language = 'en';
+			this.translations = {};
+			this.cookie = 'language';
 
 		};
 
 		var p = Translate.prototype;
 
-		p.initialize = function (options) {
+		var args;
+		var i;
+		var tmp;
+
+		p.initialize = function (options)
+		{
+			if (typeof (options) === 'undefined') {
+				options = {};
+			}
+
+			this.defaultLanguage = options.defaultLanguage || 'en';
+			this.tracker = options.tracker || null;
+			this.cookie = options.cookie || 'language';
+
+			this.language = this.getLanguage ();
 
 			var deferred = jquery.Deferred();
-			deferred.resolve ();
+			this.deferred = deferred;
+
+			$.getJSON ('locales/languages.json', function (data) {
+
+				this.translations = [];
+				this.tryLoadTranslations ([ this.language, this.language.substr (0, 2) ]);
+
+			}.bind (this));
 
 			return deferred;
 
 		};
 
+		/**
+		 * Get current language
+		 * @returns string
+		 */
+		p.getLanguage = function ()
+		{
+			var language;
 
+			if (this.cookie && Cookies.get (this.cookie)) {
+				language = Cookies.get(this.cookie);
+			}
+			else if (typeof (navigator.language) !== 'undefined') {
+				language = navigator.language;
+			}
+			else
+				language = this.defaultLanguage;
+
+			return language;
+		};
+
+		/**
+		 * Go trough all provided translations and stop as soon
+		 * as we have succesfully loaded one.
+		 * @param locales
+		 */
+		p.tryLoadTranslations = function (locales) {
+
+			var locale = locales.shift ();
+
+			$.getJSON("locales/"+ locale +".json", function(json) {
+
+				this.setTranslation (json);
+
+			}.bind(this)).fail (function () {
+
+				if (locales.length > 0) {
+					this.tryLoadTranslations (locales);
+				}
+				else {
+					this.noTranslation ();
+				}
+
+			}.bind (this));
+
+		};
+
+		p.setTranslation = function (bundle)
+		{
+			this.translations = bundle;
+			this.deferred.resolve ();
+		};
+
+		p.noTranslation = function()
+		{
+			this.deferred.resolve ();
+		};
+
+		p.translate = function (string)
+		{
+			if(string === "")
+				return string;
+
+			args = [];
+			for (i = 0; i < arguments.length; i ++) {
+				args.push (arguments[i]);
+			}
+
+			string = args.shift ();
+
+			// Also check first variable
+			tmp = null;
+
+			if (args.length > 0) {
+				tmp = this.getArgumentNumericValue(args[0]);
+			}
+
+			if (tmp !== null) {
+				this.track (string, true);
+				string = this.getTranslation (string, tmp);
+			}
+			else {
+				this.track (string, false);
+				string = this.getTranslation (string);
+			}
+
+			return sprintf.vsprintf (string, args);
+		};
+
+		p.track = function (string, isPluralizable)
+		{
+			var img = new Image();
+			img.src = sprintf.vsprintf (
+				this.tracker,
+				[
+					encodeURIComponent(string),
+					isPluralizable ? 1 : 0
+				]
+			);
+		};
+
+		p.getPluralized = function (options, amount)
+		{
+			if (amount === 0 || amount > 1) {
+				if (typeof (options.plural) !== 'undefined') {
+					return options.plural;
+				}
+			}
+
+			else {
+				if (typeof (options.single) !== 'undefined') {
+					return options.single;
+				}
+			}
+
+			// Not found? Return first value.
+			//noinspection LoopStatementThatDoesntLoopJS
+			for (var key in options) {
+				return options[key];
+			}
+		};
+
+		p.getTranslation = function (string, amount)
+		{
+			if (typeof (this.translations.resources) === 'undefined') {
+				return string;
+			}
+
+			var value = this.translations.resources[string];
+
+			if (typeof (value) === 'undefined') {
+				return string;
+			}
+
+			else if (typeof (value) === 'object') {
+				return this.getPluralized (value, amount);
+			}
+
+			else {
+				return value;
+			}
+		};
+
+		p.changeLanguage = function (language)
+		{
+			Cookies.set (this.cookie, language, { expires: 365 });
+		};
+
+		p.getArgumentNumericValue = function (argument)
+		{
+			if ($.isNumeric (argument)) {
+				return parseFloat (argument);
+			}
+			return null;
+		};
 
 		return Translate;
 	}
