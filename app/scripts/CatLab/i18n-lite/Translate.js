@@ -39,12 +39,16 @@ define (
 			var deferred = jquery.Deferred();
 			this.deferred = deferred;
 
-			$.getJSON ('locales/languages.json', function (data) {
+			$.getJSON ('locales/languages.json')
+				.done (function (data) {
+					this.translations = [];
+					this.tryLoadTranslations ([ this.language, this.language.substr (0, 2) ]);
+					}.bind (this)
+				)
 
-				this.translations = [];
-				this.tryLoadTranslations ([ this.language, this.language.substr (0, 2) ]);
-
-			}.bind (this));
+				.fail (function () {
+					deferred.resolve ();
+				}.bind (this));
 
 			return deferred;
 
