@@ -9,6 +9,7 @@
     "grunt-bower-requirejs": "^2.0.0",
     "grunt-contrib-clean": "x",
     "grunt-contrib-copy": "x",
-    "grunt-contrib-requirejs": "x"
+    "grunt-contrib-requirejs": "x",
+    "grunt-i18n-downloader": "*"
   }
 }

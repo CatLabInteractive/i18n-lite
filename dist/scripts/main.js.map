@@ -1,1 +1,1 @@
-{"version":3,"file":"main.js","sources":["main.js.src.js"],"names":["require","config","paths","sprintf","jquery","js-cookie","shim","packages","define","catlabremote"],"mappings":"AAAAA,QAAQC,QACPC,OACCC,QAAY,qCACZC,OAAW,mCACXC,YAAc,qCAEfC,QAGAC,cAKDC,QACG,aACF,SAAUC,GACT,MAAOA"}
+{"version":3,"file":"main.js.map","sources":["main.js.src.js"],"names":["require","config","paths","sprintf","jquery","js-cookie","shim","packages","define","catlabremote"],"mappings":"AAAAA,QAAQC,QACPC,OACCC,QAAY,qCACZC,OAAW,mCACXC,YAAc,qCAEfC,QAGAC,cAKDC,QACG,aACF,SAAUC,GACT,MAAOA"}
