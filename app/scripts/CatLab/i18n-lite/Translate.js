@@ -15,7 +15,11 @@ define (
 			this.language = 'en';
 			this.translations = {};
 			this.cookie = 'language';
+			this.path = '/locales/';
 
+			if (typeof(options.path) != 'undefined') {
+				this.path = options.path;
+			}
 		};
 
 		var p = Translate.prototype;
@@ -39,7 +43,7 @@ define (
 			var deferred = jquery.Deferred();
 			this.deferred = deferred;
 
-			$.getJSON ('locales/languages.json')
+			$.getJSON (this.path + 'languages.json')
 				.done (function (data) {
 					this.translations = [];
 					this.tryLoadTranslations ([ this.language, this.language.substr (0, 2) ]);
@@ -83,7 +87,7 @@ define (
 
 			var locale = locales.shift ();
 
-			$.getJSON("locales/"+ locale +".json", function(json) {
+			$.getJSON(this.path + locale + ".json", function(json) {
 
 				this.setTranslation (json);
 
