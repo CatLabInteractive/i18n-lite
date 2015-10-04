@@ -16,10 +16,6 @@ define (
 			this.translations = {};
 			this.cookie = 'language';
 			this.path = '/locales/';
-
-			if (typeof(options.path) != 'undefined') {
-				this.path = options.path;
-			}
 		};
 
 		var p = Translate.prototype;
@@ -30,8 +26,12 @@ define (
 
 		p.initialize = function (options)
 		{
-			if (typeof (options) === 'undefined') {
+			if (typeof (options) == 'undefined') {
 				options = {};
+			}
+
+			if (typeof(options.path) != 'undefined') {
+				this.path = options.path;
 			}
 
 			this.defaultLanguage = options.defaultLanguage || 'en';
