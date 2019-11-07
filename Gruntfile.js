@@ -17,7 +17,7 @@ module.exports = function(grunt) {
 					dir: "dist/",
 					mainConfigFile: "app/scripts/main.js",
 					name: "i18n-lite",
-					optimize: 'uglify2',
+					optimize: 'none',
 					optimizeCss: "standard",
 					removeCombined: true,
 					generateSourceMaps : true,
@@ -67,5 +67,5 @@ module.exports = function(grunt) {
 
 	grunt.loadNpmTasks ('grunt-i18n-downloader');
 
-	grunt.registerTask('default', [ 'i18n_downloader', 'requirejs', 'copy', 'clean' ]);
+	grunt.registerTask('default', [ 'i18n_downloader', 'requirejs', 'clean' ]);
 };

@@ -1,2 +1,233 @@
-define("CatLab/i18n-lite/Translate",["jquery","sprintf","js-cookie"],function(t,n,e){var i,a,r,s=function(t){this.defaultLanguage="en",this.language="en",this.translations={},this.cookie="language",this.path="/locales/"},o=s.prototype;return o.initialize=function(n){"undefined"==typeof n&&(n={}),"undefined"!=typeof n.path&&(this.path=n.path),this.defaultLanguage=n.defaultLanguage||"en",this.tracker=n.tracker||null,this.cookie=n.cookie||"language",this.language=this.getLanguage();var e=t.Deferred();return this.deferred=e,$.getJSON(this.path+"languages.json").done(function(t){this.translations=[],this.tryLoadTranslations([this.language,this.language.substr(0,2)])}.bind(this)).fail(function(){e.resolve()}.bind(this)),e},o.getLanguage=function(){var t;return t=this.cookie&&e.get(this.cookie)?e.get(this.cookie):"undefined"!=typeof navigator.language?navigator.language:this.defaultLanguage},o.tryLoadTranslations=function(t){var n=t.shift();$.getJSON(this.path+n+".json",function(t){this.setTranslation(t)}.bind(this)).fail(function(){t.length>0?this.tryLoadTranslations(t):this.noTranslation()}.bind(this))},o.setTranslation=function(t){this.translations=t,this.deferred.resolve()},o.noTranslation=function(){this.deferred.resolve()},o.translate=function(t){if(""===t)return t;for(i=[],a=0;a<arguments.length;a++)i.push(arguments[a]);return t=i.shift(),r=null,i.length>0&&(r=this.getArgumentNumericValue(i[0])),null!==r?(this.track(t,!0),t=this.getTranslation(t,r)):(this.track(t,!1),t=this.getTranslation(t)),n.vsprintf(t,i)},o.t=o.translate,o._=o.translate,o.track=function(t,e){var i=new Image;i.src=n.vsprintf(this.tracker,[encodeURIComponent(t),e?1:0])},o.getPluralized=function(t,n){if(0===n||n>1){if("undefined"!=typeof t.plural)return t.plural}else if("undefined"!=typeof t.single)return t.single;for(var e in t)return t[e]},o.getTranslation=function(t,n){if("undefined"==typeof this.translations.resources)return t;var e=this.translations.resources[t];return"undefined"==typeof e?t:"object"==typeof e?this.getPluralized(e,n):e},o.changeLanguage=function(t){e.set(this.cookie,t,{expires:365})},o.getArgumentNumericValue=function(t){return $.isNumeric(t)?parseFloat(t):null},s}),define("i18n-lite",["CatLab/i18n-lite/Translate"],function(t){return new t});
+define (
+	'CatLab/i18n-lite/Translate',[
+		'jquery',
+		'sprintf',
+		'js-cookie'
+	],
+	function (
+		jquery,
+		sprintf,
+		Cookies
+	) {
+		var Translate = function (options) {
+
+			this.defaultLanguage = 'en';
+			this.language = 'en';
+			this.translations = {};
+			this.cookie = 'language';
+			this.path = '/locales/';
+		};
+
+		var p = Translate.prototype;
+
+		var args;
+		var i;
+		var tmp;
+
+		p.initialize = function (options)
+		{
+			if (typeof (options) == 'undefined') {
+				options = {};
+			}
+
+			if (typeof(options.path) != 'undefined') {
+				this.path = options.path;
+			}
+
+			this.defaultLanguage = options.defaultLanguage || 'en';
+			this.tracker = options.tracker || null;
+			this.cookie = options.cookie || 'language';
+
+			if (typeof(this.language) === 'undefined') {
+				this.language = this.getLanguage();
+			}
+
+			var deferred = jquery.Deferred();
+			this.deferred = deferred;
+
+			$.getJSON (this.path + 'languages.json')
+				.done (function (data) {
+					this.translations = [];
+					this.tryLoadTranslations ([ this.language, this.language.substr (0, 2) ]);
+					}.bind (this)
+				)
+
+				.fail (function () {
+					deferred.resolve ();
+				}.bind (this));
+
+			return deferred;
+
+		};
+
+		/**
+		 * Get current language
+		 * @returns string
+		 */
+		p.getLanguage = function ()
+		{
+			var language;
+
+			if (this.cookie && Cookies.get (this.cookie)) {
+				language = Cookies.get(this.cookie);
+			} else if (typeof (navigator.language) !== 'undefined') {
+				language = navigator.language.substr(0, 2);
+			} else {
+				language = this.defaultLanguage;
+			}
+
+			return language;
+		};
+
+		/**
+		 * Go trough all provided translations and stop as soon
+		 * as we have succesfully loaded one.
+		 * @param locales
+		 */
+		p.tryLoadTranslations = function (locales) {
+
+			var locale = locales.shift ();
+
+			$.getJSON(this.path + locale + ".json", function(json) {
+
+				this.setTranslation (json);
+
+			}.bind(this)).fail (function () {
+
+				if (locales.length > 0) {
+					this.tryLoadTranslations (locales);
+				}
+				else {
+					this.noTranslation ();
+				}
+
+			}.bind (this));
+
+		};
+
+		p.setTranslation = function (bundle)
+		{
+			this.translations = bundle;
+			this.deferred.resolve ();
+		};
+
+		p.noTranslation = function()
+		{
+			this.deferred.resolve ();
+		};
+
+		p.translate = function (string)
+		{
+			if(string === "")
+				return string;
+
+			args = [];
+			for (i = 0; i < arguments.length; i ++) {
+				args.push (arguments[i]);
+			}
+
+			string = args.shift ();
+
+			// Also check first variable
+			tmp = null;
+
+			if (args.length > 0) {
+				tmp = this.getArgumentNumericValue(args[0]);
+			}
+
+			if (tmp !== null) {
+				this.track (string, true);
+				string = this.getTranslation (string, tmp);
+			}
+			else {
+				this.track (string, false);
+				string = this.getTranslation (string);
+			}
+
+			return sprintf.vsprintf (string, args);
+		};
+
+		// Alias.
+		p.t = p.translate;
+		p._ = p.translate;
+
+		p.track = function (string, isPluralizable)
+		{
+			var img = new Image();
+			img.src = sprintf.vsprintf (
+				this.tracker,
+				[
+					encodeURIComponent(string),
+					isPluralizable ? 1 : 0
+				]
+			);
+		};
+
+		p.getPluralized = function (options, amount)
+		{
+			if (amount === 0 || amount > 1) {
+				if (typeof (options.plural) !== 'undefined') {
+					return options.plural;
+				}
+			}
+
+			else {
+				if (typeof (options.single) !== 'undefined') {
+					return options.single;
+				}
+			}
+
+			// Not found? Return first value.
+			//noinspection LoopStatementThatDoesntLoopJS
+			for (var key in options) {
+				return options[key];
+			}
+		};
+
+		p.getTranslation = function (string, amount)
+		{
+			if (typeof (this.translations.resources) === 'undefined') {
+				return string;
+			}
+
+			var value = this.translations.resources[string];
+
+			if (typeof (value) === 'undefined') {
+				return string;
+			}
+
+			else if (typeof (value) === 'object') {
+				return this.getPluralized (value, amount);
+			}
+
+			else {
+				return value;
+			}
+		};
+
+		p.changeLanguage = function (language) {
+			this.language = language.substr(0, 2);
+			Cookies.set (this.cookie, language, { expires: 365 });
+		};
+
+		p.getArgumentNumericValue = function (argument) {
+			if ($.isNumeric (argument)) {
+				return parseFloat (argument);
+			}
+			return null;
+		};
+
+		return Translate;
+	}
+);
+define (
+	'i18n-lite',
+	[
+		'CatLab/i18n-lite/Translate'
+	],
+	function (Translate) {
+		return new Translate ();
+	}
+);
+
 //# sourceMappingURL=i18n-lite.js.map

@@ -26,8 +26,9 @@
 	"package.json"
   ],
   "dependencies": {
-    "sprintf": "~1.0.2",
+    "sprintf": "~1.1.2",
     "jquery": "~2.1.4",
-	"js-cookie" : "*"
+	"js-cookie" : "*",
+    "requirejs" : "*"
   }
 }

@@ -38,7 +38,9 @@ define (
 			this.tracker = options.tracker || null;
 			this.cookie = options.cookie || 'language';
 
-			this.language = this.getLanguage ();
+			if (typeof(this.language) === 'undefined') {
+				this.language = this.getLanguage();
+			}
 
 			var deferred = jquery.Deferred();
 			this.deferred = deferred;
@@ -68,12 +70,11 @@ define (
 
 			if (this.cookie && Cookies.get (this.cookie)) {
 				language = Cookies.get(this.cookie);
-			}
-			else if (typeof (navigator.language) !== 'undefined') {
-				language = navigator.language;
-			}
-			else
+			} else if (typeof (navigator.language) !== 'undefined') {
+				language = navigator.language.substr(0, 2);
+			} else {
 				language = this.defaultLanguage;
+			}
 
 			return language;
 		};
@@ -204,13 +205,12 @@ define (
 			}
 		};
 
-		p.changeLanguage = function (language)
-		{
+		p.changeLanguage = function (language) {
+			this.language = language.substr(0, 2);
 			Cookies.set (this.cookie, language, { expires: 365 });
 		};
 
-		p.getArgumentNumericValue = function (argument)
-		{
+		p.getArgumentNumericValue = function (argument) {
 			if ($.isNumeric (argument)) {
 				return parseFloat (argument);
 			}
