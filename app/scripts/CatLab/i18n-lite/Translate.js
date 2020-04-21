@@ -146,6 +146,10 @@ define(
         p._ = p.translate;
 
         p.track = function (string, isPluralizable) {
+            if (typeof(window) === 'undefined') {
+                return;
+            }
+
             var img = new Image();
             img.src = sprintf.vsprintf(
                 this.tracker,
