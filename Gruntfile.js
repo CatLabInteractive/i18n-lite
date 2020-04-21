@@ -23,9 +23,10 @@ module.exports = function(grunt) {
 					generateSourceMaps : true,
 					preserveLicenseComments : false,
 					exclude: [
-						'jquery',
 						'sprintf',
-						'js-cookie'
+						'js-cookie',
+						'axios',
+						'simply-deferred'
 					]
 				}
 			}
@@ -43,7 +44,7 @@ module.exports = function(grunt) {
 				options: {
 					'dest': 'app/examples/locales',
 					'src': {
-						'host': 'catlab-translate.herokuapp.com',
+						'host': 'translate.catlab.eu',
 						'project': 'library',
 						'port': 80
 					},

@@ -21,14 +21,15 @@
     "bower_components",
     "test",
     "tests",
-	"app",
-	"Gruntfile.js",
-	"package.json"
+    "app",
+    "Gruntfile.js",
+    "package.json"
   ],
   "dependencies": {
     "sprintf": "~1.1.2",
-    "jquery": "*",
-	"js-cookie" : "*",
-    "requirejs" : "*"
+    "js-cookie": "*",
+    "requirejs": "*",
+    "simply-deferred": "^3.1.0",
+    "axios": "^0.19.2"
   }
 }

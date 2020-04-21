@@ -1,14 +1,18 @@
 define(
     'CatLab/i18n-lite/Translate', [
-        'jquery',
+        'simply-deferred',
         'sprintf',
-        'js-cookie'
+        'js-cookie',
+        'axios'
     ],
     function (
-        jquery,
+        Deferred,
         sprintf,
-        Cookies
+        Cookies,
+        axios
     ) {
+        "use strict";
+
         var Translate = function (options) {
 
             this.defaultLanguage = 'en';
@@ -41,17 +45,17 @@ define(
                 this.language = this.getLanguage();
             }
 
-            var deferred = jquery.Deferred();
+            var deferred = new Deferred();
             this.deferred = deferred;
 
-            jquery.getJSON(this.path + 'languages.json')
-                .done(function (data) {
+            axios.get(this.path + 'languages.json')
+                .then(function (data) {
                         this.translations = [];
                         this.tryLoadTranslations([this.language ]);
                     }.bind(this)
                 )
 
-                .fail(function () {
+                .catch(function () {
                     deferred.resolve();
                 }.bind(this));
 
@@ -86,9 +90,9 @@ define(
 
             var locale = locales.shift();
 
-            jquery.getJSON(this.path + locale + ".json", function (json) {
+            axios.get(this.path + locale + ".json").then(function (json) {
                 this.setTranslation(json);
-            }.bind(this)).fail(function () {
+            }.bind(this)).catch(function () {
                 if (locales.length > 0) {
                     this.tryLoadTranslations(locales);
                 } else {
@@ -192,11 +196,17 @@ define(
         };
 
         p.getArgumentNumericValue = function (argument) {
-            if (jquery.isNumeric(argument)) {
+            if (this.isNumeric(argument)) {
                 return parseFloat(argument);
             }
             return null;
         };
+
+        p.isNumeric = function(obj) {
+            var type = typeof obj;
+            return ( type === "number" || type === "string" ) &&
+                !isNaN( obj - parseFloat( obj ) );
+        }
 
         return Translate;
     }
