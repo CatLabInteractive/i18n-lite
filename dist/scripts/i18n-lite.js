@@ -72,7 +72,7 @@ define(
 
             if (this.cookie && Cookies.get(this.cookie)) {
                 language = Cookies.get(this.cookie);
-            } else if (typeof (navigator.language) !== 'undefined') {
+            } else if (typeof(navigator) !== 'undefined' && typeof (navigator.language) !== 'undefined') {
                 language = navigator.language.substr(0, 2);
             } else {
                 language = this.defaultLanguage;
