@@ -49,7 +49,7 @@ define(
             this.deferred = deferred;
 
             axios.get(this.path + 'languages.json')
-                .then(function (data) {
+                .then(function (response) {
                         this.translations = [];
                         this.tryLoadTranslations([this.language ]);
                     }.bind(this)
@@ -90,8 +90,8 @@ define(
 
             var locale = locales.shift();
 
-            axios.get(this.path + locale + ".json").then(function (json) {
-                this.setTranslation(json);
+            axios.get(this.path + locale + ".json").then(function (response) {
+                this.setTranslation(response.data);
             }.bind(this)).catch(function () {
                 if (locales.length > 0) {
                     this.tryLoadTranslations(locales);
