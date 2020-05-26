@@ -13,7 +13,7 @@ define(
     ) {
         "use strict";
 
-        var Translate = function (options) {
+        var Translate = function () {
 
             this.defaultLanguage = 'en';
             this.language = null;
@@ -43,6 +43,10 @@ define(
             this.tracker = options.tracker || null;
             this.cookie = options.cookie || 'language';
 
+            if (typeof(options.language) !== 'undefined') {
+                this.language = options.language;
+            }
+
             if (this.language === null) {
                 this.language = this.getLanguage();
             }
@@ -70,8 +74,8 @@ define(
          * @returns {Translate|*}
          */
         p.getBundle = function(locale) {
-            var deferred = new Deferred();
             if (this.language === locale) {
+                var deferred = new Deferred();
                 deferred.resolve(this);
                 return deferred;
             }
@@ -80,7 +84,7 @@ define(
                 return this.otherBundles[locale];
             }
 
-            this.otherBundles[locale] = deferred;
+            this.otherBundles[locale] = new Deferred();
 
             // create a new translation, load it and resolve the deferred state.
             var language = new Translate();
@@ -89,10 +93,10 @@ define(
                 language: locale,
                 path: this.path
             }).then(function() {
-                deferred.resolve(language);
-            })
+                this.otherBundles[locale].resolve(language);
+            }.bind(this));
 
-            return deferred;
+            return this.otherBundles[locale];
         };
 
         /**
