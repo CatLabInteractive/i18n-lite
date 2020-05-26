@@ -20,6 +20,8 @@ define(
             this.translations = {};
             this.cookie = 'language';
             this.path = '/locales/';
+
+            this.otherBundles = [];
         };
 
         var p = Translate.prototype;
@@ -60,7 +62,37 @@ define(
                 }.bind(this));
 
             return deferred;
+        };
 
+        /**
+         * Get a bundle (pre-initialized) by a locale.
+         * @param locale
+         * @returns {Translate|*}
+         */
+        p.getBundle = function(locale) {
+            var deferred = new Deferred();
+            if (this.language === locale) {
+                deferred.resolve(this);
+                return deferred;
+            }
+
+            if (typeof(this.otherBundles[locale]) !== 'undefined') {
+                return this.otherBundles[locale];
+            }
+
+            this.otherBundles[locale] = deferred;
+
+            // create a new translation, load it and resolve the deferred state.
+            var language = new Translate();
+            language.initialize({
+                defaultLanguage: this.defaultLanguage,
+                language: locale,
+                path: this.path
+            }).then(function() {
+                deferred.resolve(language);
+            })
+
+            return deferred;
         };
 
         /**
@@ -210,7 +242,7 @@ define(
             var type = typeof obj;
             return ( type === "number" || type === "string" ) &&
                 !isNaN( obj - parseFloat( obj ) );
-        }
+        };
 
         return Translate;
     }
