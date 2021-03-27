@@ -21,6 +21,8 @@ define(
             this.cookie = 'language';
             this.path = '/locales/';
 
+            this.overrides = {};
+
             this.otherBundles = [];
         };
 
@@ -208,26 +210,81 @@ define(
             }
 
             // Not found? Return first value.
-            //noinspection LoopStatementThatDoesntLoopJS
             for (var key in options) {
-                return options[key];
+                if (options.hasOwnProperty(key)) {
+                    return options[key];
+                }
             }
         };
 
+        /**
+         * Translate a string.
+         * @param string
+         * @param amount
+         * @returns {*|boolean}
+         */
         p.getTranslation = function (string, amount) {
-            if (typeof (this.translations.resources) === 'undefined') {
+            var value = this.getResourceProperty(string);
+
+            if (value === null) {
                 return string;
             }
 
-            var value = this.translations.resources[string];
-
-            if (typeof (value) === 'undefined') {
-                return string;
-            } else if (typeof (value) === 'object') {
+            if (typeof (value) === 'object') {
                 return this.getPluralized(value, amount);
-            } else {
-                return value;
             }
+
+            return value;
+        };
+
+        /**
+         * Check if we do have a stranslation for a certain string.
+         * @param key
+         * @returns {boolean}
+         */
+        p.hasTranslation = function(key) {
+            return this.hasResourceProperty(key);
+        };
+
+        /**
+         * Check if a property / translation is found.
+         * @param key
+         * @returns {boolean}
+         */
+        p.hasResourceProperty = function(key) {
+            if (key === "") {
+                return false;
+            }
+
+            if (typeof(this.overrides[key]) !== 'undefined') {
+                return true;
+            }
+
+            if (typeof (this.translations.resources) === 'undefined') {
+                return false;
+            }
+
+            return typeof (this.translations.resources[key]) !== 'undefined';
+        };
+
+        /**
+         * @param key
+         * @returns {boolean|*}
+         */
+        p.getResourceProperty = function(key) {
+            if (typeof(this.overrides[key]) !== 'undefined') {
+                return this.overrides[key];
+            }
+
+            if (typeof (this.translations.resources) === 'undefined') {
+                return null;
+            }
+
+            if (typeof (this.translations.resources[key]) === 'undefined') {
+                return null;
+            }
+
+            return this.translations.resources[key];
         };
 
         p.changeLanguage = function (language) {
@@ -247,6 +304,15 @@ define(
             return ( type === "number" || type === "string" ) &&
                 !isNaN( obj - parseFloat( obj ) );
         };
+
+        /**
+         * Override a given key with a (temporary) custom value.
+         * @param key
+         * @param value
+         */
+        p.override = function(key, value) {
+            this.overrides[key] = value;
+        }
 
         return Translate;
     }
