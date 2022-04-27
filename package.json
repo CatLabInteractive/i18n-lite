@@ -5,7 +5,7 @@
   "author": "CatLab Interactive",
   "devDependencies": {
     "bower": "^1.8.12",
-    "grunt": "^1.3.0",
+    "grunt": "^1.5.2",
     "grunt-bower-requirejs": "^2.0.0",
     "grunt-contrib-clean": "x",
     "grunt-contrib-copy": "x",
